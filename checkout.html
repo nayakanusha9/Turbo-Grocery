@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>Checkout</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,12 +12,17 @@
 </div>
 
 <div class="form-box">
-<h2>Login</h2>
+<h2>Checkout</h2>
 
-<input type="text" id="loginName" placeholder="Name">
-<input type="password" id="loginPassword" placeholder="Password">
+<input type="text" placeholder="Address">
+<input type="text" placeholder="Phone">
 
-<button onclick="login()">Login</button>
+<select>
+    <option>Cash on Delivery</option>
+    <option>UPI</option>
+</select>
+
+<button onclick="placeOrder()">Place Order</button>
 
 </div>
 

@@ -2,16 +2,18 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Turbo Grocery</title>
+<title>Cart - Turbo Grocery</title>
+
 <link rel="stylesheet" href="style.css">
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
-<div id="toast"></div>
-<!-- NAVBAR -->
+
+<!-- ================= NAVBAR ================= -->
 <div class="topnav">
 
     <div class="logo">⚡🛒 Turbo Grocery</div>
@@ -28,8 +30,9 @@
 
 </div>
 
-<!-- PROFILE MENU -->
+<!-- ================= PROFILE MENU ================= -->
 <div class="profile-menu" id="profileMenu">
+
     <div class="profile-header">
         <div class="big-icon" id="bigIcon">👤</div>
         <h3 id="profileName">User</h3>
@@ -40,16 +43,17 @@
         <p onclick="goLogin()">Login</p>
         <p onclick="logout()">Logout</p>
     </div>
+
 </div>
 
-<!-- SIDEBAR -->
+<!-- ================= SIDEBAR ================= -->
 <div class="sidebar">
 
-    <div class="icon" data-name="Home">
+    <div class="icon" onclick="location.href='index.html'" title="Home">
         <i class="fa-solid fa-house"></i>
     </div>
 
-    <div class="icon" data-name="Cart" onclick="location.href='cart.html'">
+    <div class="icon active" title="Cart">
         <i class="fa-solid fa-cart-shopping"></i>
     </div>
 
@@ -63,36 +67,23 @@
 
 </div>
 
-<!-- MAIN -->
+<!-- ================= MAIN ================= -->
 <div class="main">
-    <h1>Welcome to Turbo Grocery ⚡</h1>
-    <p>Fast delivery. Smart shopping.</p>
 
-    <!-- 🔥 PRODUCT GRID -->
-    <div class="products" id="productContainer"></div>
+    <h1>Your Cart 🛒</h1>
 
-</div>
+    <!-- CART ITEMS -->
+    <div id="cartContainer"></div>
 
-<!-- PRODUCT POPUP -->
-<div class="popup" id="productPopup">
-
-    <div class="popup-content">
-        <span class="close" onclick="closePopup()">&times;</span>
-
-        <img id="popupImg">
-        <h2 id="popupName"></h2>
-        <p id="popupDesc"></p>
-        <h3 id="popupPrice"></h3>
-
-        <div class="popup-buttons">
-            <button class="buy" onclick="buyNow()">Buy Now</button>
-            <button class="cart" id="cartBtn" onclick="addToCart()">Add to Cart</button>
-        </div>
-    </div>
+    <!-- TOTAL -->
+    <h2 id="totalPrice">Total: ₹0</h2>
 
 </div>
 
-<!-- IMPORTANT: LOAD PRODUCTS FILE FIRST -->
+<!-- ================= TOAST ================= -->
+<div id="toast"></div>
+
+<!-- ================= SCRIPTS ================= -->
 <script src="products.js"></script>
 <script src="script.js"></script>
 
