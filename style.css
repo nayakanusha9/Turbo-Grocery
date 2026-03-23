@@ -357,3 +357,183 @@ h1{
     font-weight:bold;
     box-shadow:0 0 10px rgba(0,0,0,0.3);
 }
+
+/* ================= ORDER STATUS ================= */
+.status{
+    margin-top:10px;
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+    display:inline-block;
+}
+
+/* ORDERED */
+.status.ordered{
+    background:#ff9800;
+    color:white;
+}
+
+/* SHIPPED */
+.status.shipped{
+    background:#1e88e5;
+    color:white;
+}
+
+/* DELIVERED */
+.status.delivered{
+    background:#43a047;
+    color:white;
+}
+
+/* ================= CLEAR BUTTON ================= */
+
+.orders-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+/* BETTER BUTTON DESIGN */
+.clear-btn{
+    background: linear-gradient(135deg, #e53935, #1e88e5);
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:25px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+    box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+.clear-btn:hover{
+    transform:scale(1.05);
+    opacity:0.9;
+}
+
+
+/* ================= BUY BUTTON (FIX) ================= */
+
+.buy{
+    background: linear-gradient(135deg,#e53935,#d32f2f);
+    color:white;
+    border:none;
+    padding:10px 15px;
+    margin:5px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.buy:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 10px rgba(229,57,53,0.6);
+}
+
+
+/* ================= ADD TO CART BUTTON ================= */
+
+.cart{
+    background: linear-gradient(135deg,#1e88e5,#1565c0);
+    color:white;
+    border:none;
+    padding:10px 15px;
+    margin:5px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.cart:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 10px rgba(30,136,229,0.6);
+}
+
+/* ================= ORDER CARD ================= */
+.order-card{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    background: rgba(255,255,255,0.1);
+    padding:15px;
+    border-radius:12px;
+    margin:15px 0;
+    backdrop-filter: blur(10px);
+}
+
+/* IMAGE */
+.order-card img{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:10px;
+}
+
+/* DETAILS */
+.order-details h3{
+    margin:0;
+}
+
+.order-details p{
+    margin:5px 0;
+}
+
+/* ================= CATEGORY GRID ================= */
+.categories-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+    gap:20px;
+    margin-top:20px;
+}
+
+/* CATEGORY CARD */
+.category-card{
+    background: rgba(255,255,255,0.12);
+    border-radius:15px;
+    padding:25px;
+    text-align:center;
+    color:white;
+    backdrop-filter: blur(10px);
+    cursor:pointer;
+    transition:0.3s;
+    border:1px solid rgba(255,255,255,0.15);
+}
+
+/* ICON */
+.category-card i{
+    font-size:35px;
+    margin-bottom:10px;
+    color:#FFD700;
+}
+
+/* HOVER */
+.category-card:hover{
+    transform:translateY(-6px);
+    background: rgba(255,255,255,0.2);
+}
+
+/* ================= CATEGORY HEADER ================= */
+.category-header{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+/* BACK BUTTON */
+.back-btn{
+    font-size:22px;
+    cursor:pointer;
+    background: rgba(255,255,255,0.2);
+    padding:10px;
+    border-radius:50%;
+    transition:0.3s;
+}
+
+.back-btn:hover{
+    background:white;
+    color:black;
+}

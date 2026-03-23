@@ -56,9 +56,19 @@
 
 <!-- MAIN -->
 <div class="main">
-    <h1>Your Orders 📦</h1>
-    <button class="clear-orders" onclick="clearOrders()">Clear All Orders</button>
+
+    <!-- HEADER ROW -->
+    <div class="orders-header">
+        <h1>Your Orders 📦</h1>
+
+        <button onclick="clearOrders()" class="clear-btn">
+            🗑️ Clear Orders
+        </button>
+    </div>
+
+    <!-- ORDERS LIST -->
     <div id="ordersContainer"></div>
+
 </div>
 
 <div id="toast"></div>

@@ -1,72 +1,33 @@
-// ================= USERS =================
+// USERS
 let users = JSON.parse(localStorage.getItem("users")) || [];
 
-// ================= PROFILE =================
+// PROFILE
 function toggleProfile(e){
     e.stopPropagation();
     let menu = document.getElementById("profileMenu");
-    if(menu){
-        menu.style.display = (menu.style.display === "block") ? "none" : "block";
-    }
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
 }
 
 function updateProfile(){
     let user = localStorage.getItem("loggedInUser");
+
     let icon = document.getElementById("profileIcon");
     let bigIcon = document.getElementById("bigIcon");
     let name = document.getElementById("profileName");
 
-    if(!icon || !bigIcon || !name) return;
+    if(!icon) return;
 
     if(user){
         let letter = user.charAt(0).toUpperCase();
         icon.innerText = letter;
-        bigIcon.innerText = letter;
-        name.innerText = user;
-    } else {
+        if(bigIcon) bigIcon.innerText = letter;
+        if(name) name.innerText = user;
+    } else{
         icon.innerText = "👤";
-        bigIcon.innerText = "👤";
-        name.innerText = "User";
     }
 }
 
-// ================= AUTH =================
-function signup(){
-    let name = document.getElementById("name").value;
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-
-    users.push({name,email,password});
-    localStorage.setItem("users", JSON.stringify(users));
-
-    alert("Signup successful");
-    window.location.href="login.html";
-}
-
-function login(){
-    let name = document.getElementById("loginName").value;
-    let pass = document.getElementById("loginPassword").value;
-
-    let user = users.find(u=>u.name===name && u.password===pass);
-
-    if(user){
-        localStorage.setItem("loggedInUser", name);
-        window.location.href="index.html";
-    } else {
-        alert("Invalid login");
-    }
-}
-
-function logout(){
-    localStorage.removeItem("loggedInUser");
-    updateProfile();
-}
-
-// ================= NAV =================
-function goSignup(){ window.location.href="signup.html"; }
-function goLogin(){ window.location.href="login.html"; }
-
-// ================= CLOSE PROFILE =================
+// CLOSE PROFILE
 document.addEventListener("click", function(e){
     let menu = document.getElementById("profileMenu");
     if(menu && !menu.contains(e.target)){
@@ -74,7 +35,7 @@ document.addEventListener("click", function(e){
     }
 });
 
-// ================= PRODUCTS =================
+// PRODUCTS
 function loadProducts(){
     let container = document.getElementById("productContainer");
     if(!container) return;
@@ -88,108 +49,350 @@ function loadProducts(){
             <h3>${p.name}</h3>
             <p class="price">₹${p.price}</p>
             <p class="rating">${getStars(p.rating)}</p>
-        </div>
-        `;
+        </div>`;
     });
 }
 
-// ⭐ STAR GENERATOR
-function getStars(rating){
-    let stars = "";
-    let full = Math.floor(rating);
-    let half = rating % 1 !== 0;
-
-    for(let i=0; i<full; i++){
-        stars += '<i class="fa-solid fa-star"></i>';
+// STARS
+function getStars(r){
+    let s="";
+    for(let i=1;i<=5;i++){
+        if(i<=r) s+='<i class="fa-solid fa-star"></i>';
+        else s+='<i class="fa-regular fa-star"></i>';
     }
-
-    if(half){
-        stars += '<i class="fa-solid fa-star-half-stroke"></i>';
-    }
-
-    let empty = 5 - Math.ceil(rating);
-    for(let i=0; i<empty; i++){
-        stars += '<i class="fa-regular fa-star"></i>';
-    }
-
-    return stars;
+    return s;
 }
 
-// ================= PRODUCT POPUP =================
-function openProduct(index){
-    let p = products[index];
+// POPUP
+function openProduct(i){
+    let p=products[i];
+    window.selectedProduct=p;
 
-    document.getElementById("popupImg").src = p.img;
-    document.getElementById("popupName").innerText = p.name;
-    document.getElementById("popupDesc").innerText = p.desc;
-    document.getElementById("popupPrice").innerText = "₹" + p.price;
+    document.getElementById("popupImg").src=p.img;
+    document.getElementById("popupName").innerText=p.name;
+    document.getElementById("popupDesc").innerText=p.desc;
+    document.getElementById("popupPrice").innerText="₹"+p.price;
 
-    document.getElementById("productPopup").style.display = "flex";
+    document.getElementById("productPopup").style.display="flex";
 
-    window.selectedProduct = p;
-
-    let btn = document.getElementById("cartBtn");
+    let btn=document.getElementById("cartBtn");
 
     if(isInCart(p.name)){
-        btn.innerText = "Added to Cart";
-        btn.style.background = "gray";
-    }else{
-        btn.innerText = "Add to Cart";
-        btn.style.background = "#1e88e5";
+        btn.innerText="Added to Cart";
+        btn.style.background="gray";
+    } else{
+        btn.innerText="Add to Cart";
+        btn.style.background="blue";
     }
 }
 
 function closePopup(){
-    document.getElementById("productPopup").style.display = "none";
+    document.getElementById("productPopup").style.display="none";
 }
 
-// ================= CART =================
+// CART
 function getCart(){
-    return JSON.parse(localStorage.getItem("cart")) || [];
+    return JSON.parse(localStorage.getItem("cart"))||[];
 }
 
-function saveCart(cart){
-    localStorage.setItem("cart", JSON.stringify(cart));
+function saveCart(c){
+    localStorage.setItem("cart",JSON.stringify(c));
 }
 
 function addToCart(){
-    let cart = getCart();
-    let p = window.selectedProduct;
+    let cart=getCart();
+    let p=window.selectedProduct;
 
-    if(!p){
-        showToast("Select product first ❗");
-        return;
-    }
+    let found=cart.find(i=>i.name===p.name);
 
-    let found = cart.find(item => item.name === p.name);
-
-    if(found){
-        found.qty += 1;
-    }else{
-        cart.push({...p, qty:1});
-    }
+    if(found) found.qty++;
+    else cart.push({...p,qty:1});
 
     saveCart(cart);
-    showToast("Added to cart 🛒");
+
+    document.getElementById("cartBtn").innerText="Added to Cart";
+    document.getElementById("cartBtn").style.background="gray";
+
+    showToast("Added to Cart 🛒");
 
     loadProducts();
-    loadCategoryProducts();
-
-    document.getElementById("cartBtn").innerText = "Added to Cart";
-    document.getElementById("cartBtn").style.background = "gray";
 }
 
 function isInCart(name){
-    let cart = getCart();
-    return cart.some(item => item.name === name);
+    return getCart().some(i=>i.name===name);
 }
 
-// ================= LOAD =================
-window.onload = function(){
-    updateProfile();
-    loadProducts();
+// BUY
+function buyNow(){
+    let orders=JSON.parse(localStorage.getItem("orders"))||[];
+
+    orders.push({...window.selectedProduct,status:"Ordered"});
+
+    localStorage.setItem("orders",JSON.stringify(orders));
+
+    window.location.href="orders.html";
+}
+
+// SEARCH
+function searchProducts(){
+    let val=document.getElementById("searchInput").value.toLowerCase();
+
+    let container=document.getElementById("productContainer");
+
+    let filtered=products.filter(p=>p.name.toLowerCase().includes(val));
+
+    container.innerHTML="";
+
+    if(filtered.length===0){
+        container.innerHTML="<h2>Item not available 😔</h2>";
+        return;
+    }
+
+    filtered.forEach((p,i)=>{
+        container.innerHTML+=`
+        <div class="product-card" onclick="openProduct(${i})">
+            <img src="${p.img}">
+            <h3>${p.name}</h3>
+            <p class="price">₹${p.price}</p>
+            <p class="rating">${getStars(p.rating)}</p>
+        </div>`;
+    });
+}
+
+// TOAST
+function showToast(msg){
+    let t=document.getElementById("toast");
+    t.innerText=msg;
+    t.style.display="block";
+
+    setTimeout(()=>t.style.display="none",2000);
+}
+
+function loadCart(){
+    let container = document.getElementById("cartContainer");
+    let totalBox = document.getElementById("totalPrice");
+
+    if(!container) return;
+
+    let cart = getCart();
+    container.innerHTML = "";
+
+    if(cart.length === 0){
+        container.innerHTML = "<p>Your cart is empty 🛒</p>";
+        if(totalBox) totalBox.innerText = "Total: ₹0";
+        return;
+    }
+
+    let total = 0;
+
+    cart.forEach((item, index)=>{
+        total += item.price * item.qty;
+
+        container.innerHTML += `
+        <div class="cart-item">
+            <img src="${item.img}">
+            <div class="cart-info">
+                <h3>${item.name}</h3>
+                <p>${item.desc}</p>
+                <p>₹${item.price}</p>
+
+                <div class="qty">
+                    <button onclick="decreaseQty(${index})">-</button>
+                    <span>${item.qty}</span>
+                    <button onclick="increaseQty(${index})">+</button>
+                </div>
+
+                <button class="remove" onclick="removeItem(${index})">Remove</button>
+            </div>
+        </div>`;
+    });
+
+    if(totalBox) totalBox.innerText = "Total: ₹" + total;
+}
+
+function loadCart(){
+    let container = document.getElementById("cartContainer");
+    let totalBox = document.getElementById("totalPrice");
+
+    if(!container) return;
+
+    let cart = getCart();
+    container.innerHTML = "";
+
+    if(cart.length === 0){
+        container.innerHTML = "<p>Your cart is empty 🛒</p>";
+        if(totalBox) totalBox.innerText = "Total: ₹0";
+        return;
+    }
+
+    let total = 0;
+
+    cart.forEach((item, index)=>{
+        total += item.price * item.qty;
+
+        container.innerHTML += `
+        <div class="cart-item">
+            <img src="${item.img}">
+            <div class="cart-info">
+                <h3>${item.name}</h3>
+                <p>${item.desc}</p>
+                <p>₹${item.price}</p>
+
+                <div class="qty">
+                    <button onclick="event.stopPropagation(); decreaseQty(${index})">-</button>
+                    <span>${item.qty}</span>
+                    <button onclick="event.stopPropagation(); increaseQty(${index})">+</button>
+                </div>
+
+                <button class="remove" onclick="event.stopPropagation(); removeItem(${index})">
+                    Remove
+                </button>
+            </div>
+        </div>`;
+    });
+
+    if(totalBox) totalBox.innerText = "Total: ₹" + total;
+}
+
+function loadOrders(){
+    let container = document.getElementById("ordersContainer");
+    if(!container) return;
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    container.innerHTML = "";
+
+    if(orders.length === 0){
+        container.innerHTML = "<p>No orders yet 📦</p>";
+        return;
+    }
+
+    orders.forEach((item, index) => {
+
+        container.innerHTML += `
+        <div class="order-card">
+            <img src="${item.img}">
+
+            <div class="order-details">
+                <h3>${item.name}</h3>
+                <p>${item.desc}</p>
+                <p class="price">₹${item.price}</p>
+
+                <div class="status ${item.status.toLowerCase()}">
+                    ${item.status}
+                </div>
+            </div>
+        </div>
+        `;
+    });
+
+    updateOrderStatus();
+}
+
+function removeItem(index){
+    let cart = getCart();
+    cart.splice(index,1);
+    saveCart(cart);
     loadCart();
+}
+
+function increaseQty(index){
+    let cart = getCart();
+    cart[index].qty++;
+    saveCart(cart);
+    loadCart();
+}
+
+function decreaseQty(index){
+    let cart = getCart();
+
+    if(cart[index].qty > 1){
+        cart[index].qty--;
+    } else{
+        cart.splice(index,1);
+    }
+
+    saveCart(cart);
+    loadCart();
+}
+
+
+function loadCategoryProducts(){
+    let container = document.getElementById("productContainer");
+    let title = document.getElementById("catTitle");
+
+    if(!container) return;
+
+    let cat = localStorage.getItem("selectedCategory");
+
+    if(title) title.innerText = cat + " 🛍️";
+
+    let filtered = products.filter(p => p.category === cat);
+
+    container.innerHTML = "";
+
+    if(filtered.length === 0){
+        container.innerHTML = "<p>No products found 😔</p>";
+        return;
+    }
+
+    filtered.forEach((p, index) => {
+
+        container.innerHTML += `
+        <div class="product-card ${isInCart(p.name) ? 'in-cart' : ''}" onclick="openProductByName('${p.name}')">
+            <img src="${p.img}">
+            <h3>${p.name}</h3>
+            <p class="price">₹${p.price}</p>
+            <p class="rating">${getStars(p.rating)}</p>
+        </div>
+        `;
+    });
+}
+function goBack(){
+    window.location.href = "categories.html";
+}
+
+
+function openProductByName(name){
+    let p = products.find(i=>i.name===name);
+    window.selectedProduct = p;
+
+    document.getElementById("popupImg").src=p.img;
+    document.getElementById("popupName").innerText=p.name;
+    document.getElementById("popupDesc").innerText=p.desc;
+    document.getElementById("popupPrice").innerText="₹"+p.price;
+
+    document.getElementById("productPopup").style.display="flex";
+}
+
+function clearOrders(){
+    localStorage.setItem("orders", JSON.stringify([]));
     loadOrders();
-    loadCategories();
-    loadCategoryProducts();
-};
+    showToast("Orders cleared 🗑️");
+}
+
+// LOAD
+window.addEventListener("load", function(){
+
+    updateProfile();
+
+    if(document.getElementById("productContainer")){
+        loadProducts();
+    }
+
+    if(document.getElementById("cartContainer")){
+        loadCart();
+    }
+
+    if(document.getElementById("ordersContainer")){
+        loadOrders();
+    }
+
+    if(document.getElementById("categoryContainer")){
+        loadCategories();
+    }
+
+    if(document.getElementById("catTitle")){
+        loadCategoryProducts();
+    }
+});

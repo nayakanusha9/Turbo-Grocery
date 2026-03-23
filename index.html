@@ -5,7 +5,6 @@
 <title>Turbo Grocery</title>
 <link rel="stylesheet" href="style.css">
 
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
@@ -19,10 +18,9 @@
 
     <div class="search-container">
         <i class="fa fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search groceries..." onkeyup="searchProducts()">
+        <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchProducts()">
     </div>
 
-    <!-- PROFILE -->
     <div class="profile" onclick="toggleProfile(event)">
         <div id="profileIcon">👤</div>
     </div>
@@ -66,14 +64,14 @@
     <h1>Welcome to Turbo Grocery ⚡</h1>
     <p>Fast delivery. Smart shopping.</p>
 
-    <!-- 🔥 PRODUCT GRID -->
     <div class="products" id="productContainer"></div>
 </div>
 
-<!-- PRODUCT POPUP -->
+<!-- POPUP -->
 <div class="popup" id="productPopup">
     <div class="popup-content">
         <span class="close" onclick="closePopup()">&times;</span>
+
         <img id="popupImg">
         <h2 id="popupName"></h2>
         <p id="popupDesc"></p>
@@ -86,7 +84,6 @@
     </div>
 </div>
 
-<!-- IMPORTANT: LOAD PRODUCTS FILE FIRST -->
 <script src="products.js"></script>
 <script src="script.js"></script>
 
