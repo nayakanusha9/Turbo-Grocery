@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Turbo Grocery</title>
+<title>Category Products - Turbo Grocery</title>
+
 <link rel="stylesheet" href="style.css">
 
 <!-- Font Awesome -->
@@ -11,24 +12,18 @@
 
 <body>
 
-<div id="toast"></div>
-
-<!-- NAVBAR -->
+<!-- ================= NAVBAR ================= -->
 <div class="topnav">
+
     <div class="logo">⚡🛒 Turbo Grocery</div>
 
-    <div class="search-container">
-        <i class="fa fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search groceries..." onkeyup="searchProducts()">
-    </div>
-
-    <!-- PROFILE -->
     <div class="profile" onclick="toggleProfile(event)">
         <div id="profileIcon">👤</div>
     </div>
+
 </div>
 
-<!-- PROFILE MENU -->
+<!-- ================= PROFILE MENU ================= -->
 <div class="profile-menu" id="profileMenu">
     <div class="profile-header">
         <div class="big-icon" id="bigIcon">👤</div>
@@ -42,8 +37,9 @@
     </div>
 </div>
 
-<!-- SIDEBAR -->
+<!-- ================= SIDEBAR ================= -->
 <div class="sidebar">
+
     <div class="icon" onclick="location.href='index.html'" data-name="Home">
         <i class="fa-solid fa-house"></i>
     </div>
@@ -59,34 +55,46 @@
     <div class="icon" onclick="location.href='categories.html'" data-name="Categories">
         <i class="fa-solid fa-layer-group"></i>
     </div>
+
 </div>
 
-<!-- MAIN -->
+<!-- ================= MAIN ================= -->
 <div class="main">
-    <h1>Welcome to Turbo Grocery ⚡</h1>
-    <p>Fast delivery. Smart shopping.</p>
 
-    <!-- 🔥 PRODUCT GRID -->
-    <div class="products" id="productContainer"></div>
+    <div class="category-header">
+        <i class="fa-solid fa-arrow-left back-btn" onclick="goBack()"></i>
+        <h1 id="catTitle"></h1>
+    </div>
+
+    <!-- PRODUCTS GRID -->
+    <div id="productContainer" class="products"></div>
+
 </div>
 
-<!-- PRODUCT POPUP -->
+<!-- ================= PRODUCT POPUP ================= -->
 <div class="popup" id="productPopup">
     <div class="popup-content">
-        <span class="close" onclick="closePopup()">&times;</span>
+
+        <span class="close" onclick="closePopup()">×</span>
+
         <img id="popupImg">
-        <h2 id="popupName"></h2>
+
+        <h3 id="popupName"></h3>
         <p id="popupDesc"></p>
-        <h3 id="popupPrice"></h3>
+        <p id="popupPrice"></p>
 
         <div class="popup-buttons">
             <button class="buy" onclick="buyNow()">Buy Now</button>
             <button class="cart" id="cartBtn" onclick="addToCart()">Add to Cart</button>
         </div>
+
     </div>
 </div>
 
-<!-- IMPORTANT: LOAD PRODUCTS FILE FIRST -->
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- SCRIPTS -->
 <script src="products.js"></script>
 <script src="script.js"></script>
 

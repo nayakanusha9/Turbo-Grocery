@@ -12,7 +12,6 @@ function toggleProfile(e){
 
 function updateProfile(){
     let user = localStorage.getItem("loggedInUser");
-
     let icon = document.getElementById("profileIcon");
     let bigIcon = document.getElementById("bigIcon");
     let name = document.getElementById("profileName");
@@ -24,7 +23,7 @@ function updateProfile(){
         icon.innerText = letter;
         bigIcon.innerText = letter;
         name.innerText = user;
-    } else{
+    } else {
         icon.innerText = "👤";
         bigIcon.innerText = "👤";
         name.innerText = "User";
@@ -53,7 +52,7 @@ function login(){
     if(user){
         localStorage.setItem("loggedInUser", name);
         window.location.href="index.html";
-    } else{
+    } else {
         alert("Invalid login");
     }
 }
@@ -109,7 +108,6 @@ function getStars(rating){
     }
 
     let empty = 5 - Math.ceil(rating);
-
     for(let i=0; i<empty; i++){
         stars += '<i class="fa-regular fa-star"></i>';
     }
@@ -146,18 +144,14 @@ function closePopup(){
 }
 
 // ================= CART =================
-
-// Get cart
 function getCart(){
     return JSON.parse(localStorage.getItem("cart")) || [];
 }
 
-// Save cart
 function saveCart(cart){
     localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// Add to cart
 function addToCart(){
     let cart = getCart();
     let p = window.selectedProduct;
@@ -176,245 +170,18 @@ function addToCart(){
     }
 
     saveCart(cart);
-
     showToast("Added to cart 🛒");
 
     loadProducts();
+    loadCategoryProducts();
 
     document.getElementById("cartBtn").innerText = "Added to Cart";
     document.getElementById("cartBtn").style.background = "gray";
 }
 
-// Check if in cart
 function isInCart(name){
     let cart = getCart();
     return cart.some(item => item.name === name);
-}
-
-// Increase qty
-function increaseQty(index){
-    let cart = getCart();
-    cart[index].qty++;
-    saveCart(cart);
-    loadCart();
-}
-
-// Decrease qty
-function decreaseQty(index){
-    let cart = getCart();
-
-    if(cart[index].qty > 1){
-        cart[index].qty--;
-    }else{
-        cart.splice(index,1);
-    }
-
-    saveCart(cart);
-    loadCart();
-}
-
-// Remove item
-function removeItem(index){
-    let cart = getCart();
-    cart.splice(index,1);
-    saveCart(cart);
-    loadCart();
-}
-
-// Load cart page
-function loadCart(){
-    let container = document.getElementById("cartContainer");
-    let totalBox = document.getElementById("totalPrice");
-
-    if(!container) return;
-
-    let cart = getCart();
-
-    container.innerHTML = "";
-
-    if(cart.length === 0){
-        container.innerHTML = "<p>Your cart is empty 🛒</p>";
-        if(totalBox) totalBox.innerText = "Total: ₹0";
-        return;
-    }
-
-    let total = 0;
-
-    cart.forEach((item, index) => {
-
-        total += item.price * item.qty;
-
-        container.innerHTML += `
-        <div class="cart-item">
-            <img src="${item.img}">
-            <div class="cart-info">
-                <h3>${item.name}</h3>
-                <p>${item.desc}</p>
-                <p>₹${item.price}</p>
-
-                <div class="qty">
-                    <button onclick="decreaseQty(${index})">-</button>
-                    <span>${item.qty}</span>
-                    <button onclick="increaseQty(${index})">+</button>
-                </div>
-
-                <button class="remove" onclick="removeItem(${index})">Remove</button>
-            </div>
-        </div>
-        `;
-    });
-
-    if(totalBox) totalBox.innerText = "Total: ₹" + total;
-}
-
-// ================= BUY =================
-function buyNow(){
-    let p = window.selectedProduct;
-
-    if(!p){
-        showToast("Select product first ❗");
-        return;
-    }
-
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-    orders.push({
-        ...p,
-        qty:1,
-        status:"Ordered"
-    });
-
-    localStorage.setItem("orders", JSON.stringify(orders));
-
-    showToast("Order placed ✅");
-
-    setTimeout(()=>{
-        window.location.href = "orders.html";
-    },1000);
-}
-
-// ================= TOAST =================
-function showToast(msg){
-    let toast = document.getElementById("toast");
-    if(!toast) return;
-
-    toast.innerText = msg;
-    toast.style.display = "block";
-
-    setTimeout(()=>{
-        toast.style.display = "none";
-    },2000);
-}
-
-// ================= ORDERS =================
-function loadOrders(){
-    let container = document.getElementById("ordersContainer");
-    if(!container) return;
-
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-    container.innerHTML = "";
-
-    if(orders.length === 0){
-        container.innerHTML = "<p>No orders yet 📦</p>";
-        return;
-    }
-
-    orders.forEach((item, index) => {
-
-        container.innerHTML += `
-        <div class="order-item">
-            <img src="${item.img}">
-            <div class="order-info">
-                <h3>${item.name}</h3>
-                <p>${item.desc}</p>
-                <p>₹${item.price}</p>
-
-                <div class="status ${item.status.toLowerCase()}">
-                    ${item.status}
-                </div>
-            </div>
-        </div>
-        `;
-    });
-
-    updateOrderStatus();
-
-    function clearOrders(){
-        let confirmClear = confirm("Are you sure to clear all orders?");
-
-        if(confirmClear){
-            localStorage.setItem("orders", JSON.stringify([])); // safer than remove
-            loadOrders();
-            showToast("All orders cleared 🗑️");
-        }
-    }
-}
-
-// ================= ORDERSTATUS =================
-function updateOrderStatus(){
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-    orders.forEach(o => {
-        if(o.status === "Ordered"){
-            o.status = "Shipped";
-        } else if(o.status === "Shipped"){
-            o.status = "Delivered";
-        }
-    });
-
-    localStorage.setItem("orders", JSON.stringify(orders));
-}
-
-// ================= CATEGORY =================
-function loadCategories(){
-    let container = document.getElementById("categoryContainer");
-    if(!container) return;
-
-    let unique = [...new Set(products.map(p => p.category))];
-
-    container.innerHTML = "";
-
-    unique.forEach(cat => {
-        container.innerHTML += `
-        <div class="category-card" onclick="openCategory('${cat}')">
-            <i class="fa-solid fa-basket-shopping"></i>
-            <h3>${cat}</h3>
-        </div>
-        `;
-    });
-}
-
-// Open category page
-function openCategory(cat){
-    localStorage.setItem("selectedCategory", cat);
-    window.location.href = "category-products.html";
-}
-
-// ================= CATEGORY-PRODUCT =================
-function loadCategoryProducts(){
-    let container = document.getElementById("productContainer");
-    let title = document.getElementById("catTitle");
-
-    if(!container) return;
-
-    let cat = localStorage.getItem("selectedCategory");
-
-    title.innerText = cat + " 🛍️";
-
-    let filtered = products.filter(p => p.category === cat);
-
-    container.innerHTML = "";
-
-    filtered.forEach((p, index) => {
-        container.innerHTML += `
-        <div class="product-card" onclick="openProduct(${index})">
-            <img src="${p.img}">
-            <h3>${p.name}</h3>
-            <p>₹${p.price}</p>
-        </div>
-        `;
-    });
 }
 
 // ================= LOAD =================
@@ -423,6 +190,6 @@ window.onload = function(){
     loadProducts();
     loadCart();
     loadOrders();
-    loadCategories();        
-    loadCategoryProducts();  
+    loadCategories();
+    loadCategoryProducts();
 };
