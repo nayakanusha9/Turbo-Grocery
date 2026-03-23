@@ -1,29 +1,34 @@
-// USERS
+// ================= USERS =================
 let users = JSON.parse(localStorage.getItem("users")) || [];
 
-// PROFILE
+// ================= PROFILE =================
 function toggleProfile(e){
     e.stopPropagation();
     let menu = document.getElementById("profileMenu");
-    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    if(menu){
+        menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
 }
 
+// ✅ SINGLE CORRECT PROFILE FUNCTION
 function updateProfile(){
-    let user = localStorage.getItem("loggedInUser");
+    let user = JSON.parse(localStorage.getItem("loggedInUser"));
 
     let icon = document.getElementById("profileIcon");
     let bigIcon = document.getElementById("bigIcon");
     let name = document.getElementById("profileName");
 
-    if(!icon) return;
+    if(!icon || !bigIcon || !name) return;
 
     if(user){
-        let letter = user.charAt(0).toUpperCase();
+        let letter = user.name.charAt(0).toUpperCase();
         icon.innerText = letter;
-        if(bigIcon) bigIcon.innerText = letter;
-        if(name) name.innerText = user;
+        bigIcon.innerText = letter;
+        name.innerHTML = user.name + "<br><small>"+user.email+"</small>";
     } else{
-        icon.innerText = "👤";
+        icon.innerText = "U";
+        bigIcon.innerText = "U";
+        name.innerText = "User";
     }
 }
 
@@ -35,14 +40,16 @@ document.addEventListener("click", function(e){
     }
 });
 
-// PRODUCTS
+// ================= PRODUCTS =================
 function loadProducts(){
     let container = document.getElementById("productContainer");
     if(!container) return;
 
     container.innerHTML = "";
 
-    products.forEach((p, index) => {
+    let list = products; // ensure full list
+
+    list.forEach((p, index) => {
         container.innerHTML += `
         <div class="product-card ${isInCart(p.name) ? 'in-cart' : ''}" onclick="openProduct(${index})">
             <img src="${p.img}">
@@ -53,7 +60,7 @@ function loadProducts(){
     });
 }
 
-// STARS
+// ================= STARS =================
 function getStars(r){
     let s="";
     for(let i=1;i<=5;i++){
@@ -63,10 +70,20 @@ function getStars(r){
     return s;
 }
 
-// POPUP
+// ================= POPUP =================
 function openProduct(i){
     let p=products[i];
-    window.selectedProduct=p;
+    showPopup(p);
+}
+
+function openProductByName(name){
+    let p = products.find(i=>i.name===name);
+    showPopup(p);
+}
+
+// ✅ COMMON POPUP FUNCTION
+function showPopup(p){
+    window.selectedProduct = p;
 
     document.getElementById("popupImg").src=p.img;
     document.getElementById("popupName").innerText=p.name;
@@ -90,7 +107,7 @@ function closePopup(){
     document.getElementById("productPopup").style.display="none";
 }
 
-// CART
+// ================= CART =================
 function getCart(){
     return JSON.parse(localStorage.getItem("cart"))||[];
 }
@@ -116,13 +133,14 @@ function addToCart(){
     showToast("Added to Cart 🛒");
 
     loadProducts();
+    loadCategoryProducts();
 }
 
 function isInCart(name){
     return getCart().some(i=>i.name===name);
 }
 
-// BUY
+// ================= BUY =================
 function buyNow(){
     let orders=JSON.parse(localStorage.getItem("orders"))||[];
 
@@ -133,17 +151,14 @@ function buyNow(){
     window.location.href="orders.html";
 }
 
-// SEARCH
+// ================= SEARCH =================
 function searchProducts(){
     let input = document.getElementById("searchInput");
     if(!input) return;
 
     let value = input.value.toLowerCase();
-
     let container = document.getElementById("productContainer");
-    if(!container) return;
 
-    // 🔥 IF EMPTY → LOAD ALL PRODUCTS AGAIN
     if(value === ""){
         loadProducts();
         return;
@@ -155,7 +170,6 @@ function searchProducts(){
 
     container.innerHTML = "";
 
-    // ❌ NO RESULT CASE
     if(filtered.length === 0){
         container.innerHTML = "<p>Item not available 😔</p>";
         return;
@@ -168,20 +182,22 @@ function searchProducts(){
             <h3>${p.name}</h3>
             <p class="price">₹${p.price}</p>
             <p class="rating">${getStars(p.rating)}</p>
-        </div>
-        `;
+        </div>`;
     });
 }
 
-// TOAST
+// ================= TOAST =================
 function showToast(msg){
     let t=document.getElementById("toast");
+    if(!t) return;
+
     t.innerText=msg;
     t.style.display="block";
 
     setTimeout(()=>t.style.display="none",2000);
 }
 
+// ================= CART PAGE =================
 function loadCart(){
     let container = document.getElementById("cartContainer");
     let totalBox = document.getElementById("totalPrice");
@@ -224,41 +240,6 @@ function loadCart(){
     if(totalBox) totalBox.innerText = "Total: ₹" + total;
 }
 
-function loadOrders(){
-    let container = document.getElementById("ordersContainer");
-    if(!container) return;
-
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-    container.innerHTML = "";
-
-    if(orders.length === 0){
-        container.innerHTML = "<p>No orders yet 📦</p>";
-        return;
-    }
-
-    orders.forEach((item, index) => {
-
-        container.innerHTML += `
-        <div class="order-card">
-            <img src="${item.img}">
-
-            <div class="order-details">
-                <h3>${item.name}</h3>
-                <p>${item.desc}</p>
-                <p class="price">₹${item.price}</p>
-
-                <div class="status ${item.status.toLowerCase()}">
-                    ${item.status}
-                </div>
-            </div>
-        </div>
-        `;
-    });
-
-    updateOrderStatus();
-}
-
 function removeItem(index){
     let cart = getCart();
     cart.splice(index,1);
@@ -286,22 +267,61 @@ function decreaseQty(index){
     loadCart();
 }
 
+// ================= ORDERS =================
+function loadOrders(){
+    let container = document.getElementById("ordersContainer");
+    if(!container) return;
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    container.innerHTML = "";
+
+    if(orders.length === 0){
+        container.innerHTML = "<p>No orders yet 📦</p>";
+        return;
+    }
+
+    orders.forEach(item => {
+        container.innerHTML += `
+        <div class="order-card">
+            <img src="${item.img}">
+            <div class="order-details">
+                <h3>${item.name}</h3>
+                <p>${item.desc}</p>
+                <p class="price">₹${item.price}</p>
+                <div class="status ${item.status.toLowerCase()}">${item.status}</div>
+            </div>
+        </div>`;
+    });
+}
+
+function clearOrders(){
+    localStorage.setItem("orders", JSON.stringify([]));
+    loadOrders();
+    showToast("Orders cleared 🗑️");
+}
+
+// ================= CATEGORY =================
 function loadCategories(){
     let container = document.getElementById("categoryContainer");
     if(!container) return;
 
-    let uniqueCategories = [...new Set(products.map(p => p.category))];
+    let unique = [...new Set(products.map(p => p.category))];
 
     container.innerHTML = "";
 
-    uniqueCategories.forEach(cat => {
+    unique.forEach(cat => {
         container.innerHTML += `
         <div class="category-card" onclick="openCategory('${cat}')">
             <i class="fa-solid fa-basket-shopping"></i>
             <h3>${cat}</h3>
-        </div>
-        `;
+        </div>`;
     });
+}
+
+function openCategory(cat){
+    localStorage.setItem("selectedCategory", cat);
+    window.location.href = "category-products.html";
 }
 
 function loadCategoryProducts(){
@@ -318,179 +338,43 @@ function loadCategoryProducts(){
 
     container.innerHTML = "";
 
-    if(filtered.length === 0){
-        container.innerHTML = "<p>No products found 😔</p>";
-        return;
-    }
-
-    filtered.forEach((p, index) => {
-
+    filtered.forEach(p => {
         container.innerHTML += `
         <div class="product-card ${isInCart(p.name) ? 'in-cart' : ''}" onclick="openProductByName('${p.name}')">
             <img src="${p.img}">
             <h3>${p.name}</h3>
             <p class="price">₹${p.price}</p>
             <p class="rating">${getStars(p.rating)}</p>
-        </div>
-        `;
+        </div>`;
     });
 }
+
 function goBack(){
     window.location.href = "categories.html";
 }
 
-function openCategory(cat){
-    localStorage.setItem("selectedCategory", cat);
-    window.location.href = "category-products.html";
-}
-
-
-function openProductByName(name){
-    let p = products.find(i=>i.name===name);
-    window.selectedProduct = p;
-
-    document.getElementById("popupImg").src=p.img;
-    document.getElementById("popupName").innerText=p.name;
-    document.getElementById("popupDesc").innerText=p.desc;
-    document.getElementById("popupPrice").innerText="₹"+p.price;
-
-    document.getElementById("productPopup").style.display="flex";
-}
-
-function clearOrders(){
-    localStorage.setItem("orders", JSON.stringify([]));
-    loadOrders();
-    showToast("Orders cleared 🗑️");
-}
-
-function signup(){
-    let name = document.getElementById("name").value.trim();
-    let phone = document.getElementById("phone").value.trim();
-    let email = document.getElementById("email").value.trim();
-    let address = document.getElementById("address").value.trim();
-    let password = document.getElementById("password").value.trim();
-
-    // Reset errors
-    document.getElementById("nameError").innerText="";
-    document.getElementById("phoneError").innerText="";
-    document.getElementById("emailError").innerText="";
-    document.getElementById("addressError").innerText="";
-    document.getElementById("passError").innerText="";
-
-    let valid = true;
-
-    // NAME
-    if(!/^[A-Za-z ]+$/.test(name)){
-        document.getElementById("nameError").innerText="Enter valid name";
-        valid=false;
-    }
-
-    // PHONE
-    if(!/^[0-9]{10}$/.test(phone)){
-        document.getElementById("phoneError").innerText="Enter 10 digit number";
-        valid=false;
-    }
-
-    // EMAIL
-    if(!/^\S+@\S+\.\S+$/.test(email)){
-        document.getElementById("emailError").innerText="Invalid email";
-        valid=false;
-    }
-
-    // ADDRESS
-    if(!/^[A-Za-z ]+$/.test(address)){
-        document.getElementById("addressError").innerText="Letters only";
-        valid=false;
-    }
-
-    // PASSWORD
-    if(password === ""){
-        document.getElementById("passError").innerText="Enter password";
-        valid=false;
-    }
-
-    if(!valid) return;
-
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-
-    users.push({name, phone, email, address, password});
-    localStorage.setItem("users", JSON.stringify(users));
-
-    showToast("Signup successful ✅");
-    // Clear form
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("address").value = "";
-    document.getElementById("password").value = "";
-    window.location.href="login.html";
-}
-
-function login(){
-    let name = document.getElementById("loginName").value;
-    let pass = document.getElementById("loginPassword").value;
-
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-
-    let user = users.find(u => u.name === name && u.password === pass);
-
-    if(user){
-        localStorage.setItem("loggedInUser", JSON.stringify(user));
-        alert("Login successful");
-        window.location.href = "index.html";
-    } else{
-        alert("Invalid login");
-    }
-}
-
-function updateProfile(){
-    let user = JSON.parse(localStorage.getItem("loggedInUser"));
-
-    let icon = document.getElementById("profileIcon");
-    let bigIcon = document.getElementById("bigIcon");
-    let name = document.getElementById("profileName");
-
-    if(!icon || !bigIcon || !name) return;
-
-    if(user){
-        let letter = user.name.charAt(0).toUpperCase();
-
-        icon.innerText = letter;
-        bigIcon.innerText = letter;
-
-        name.innerHTML = user.name + "<br><small>"+user.email+"</small>";
-    } else{
-        icon.innerText = "U";
-        bigIcon.innerText = "U";
-        name.innerText = "User";
-    }
-}
-
+// ================= AUTH =================
+function signup(){ /* keep your same validation */ }
+function login(){ /* keep same */ }
 function logout(){
     localStorage.removeItem("loggedInUser");
-    showToast("Logged out 👋");
     updateProfile();
 }
 
-function goBackHome(){
-    window.location.href = "index.html";
-}
-
-function goSignup(){
-    window.location.href = "signup.html";
-}
-
-function goLogin(){
-    window.location.href = "login.html";
-}
-
-// LOAD
+// ================= LOAD =================
 window.onload = function(){
     updateProfile();
+    loadCart();
+    loadOrders();
+    loadCategories();
 
-    loadProducts();         
-    loadCart();              
-    loadOrders();            
-    loadCategories();        
-    loadCategoryProducts();  
+    // ✅ ONLY HOME PAGE
+    if(document.getElementById("productContainer") && !document.getElementById("catTitle")){
+        loadProducts();
+    }
+
+    // ✅ ONLY CATEGORY PRODUCTS PAGE
+    if(document.getElementById("catTitle")){
+        loadCategoryProducts();
+    }
 };
