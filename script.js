@@ -210,50 +210,6 @@ function loadCart(){
     if(totalBox) totalBox.innerText = "Total: ₹" + total;
 }
 
-function loadCart(){
-    let container = document.getElementById("cartContainer");
-    let totalBox = document.getElementById("totalPrice");
-
-    if(!container) return;
-
-    let cart = getCart();
-    container.innerHTML = "";
-
-    if(cart.length === 0){
-        container.innerHTML = "<p>Your cart is empty 🛒</p>";
-        if(totalBox) totalBox.innerText = "Total: ₹0";
-        return;
-    }
-
-    let total = 0;
-
-    cart.forEach((item, index)=>{
-        total += item.price * item.qty;
-
-        container.innerHTML += `
-        <div class="cart-item">
-            <img src="${item.img}">
-            <div class="cart-info">
-                <h3>${item.name}</h3>
-                <p>${item.desc}</p>
-                <p>₹${item.price}</p>
-
-                <div class="qty">
-                    <button onclick="event.stopPropagation(); decreaseQty(${index})">-</button>
-                    <span>${item.qty}</span>
-                    <button onclick="event.stopPropagation(); increaseQty(${index})">+</button>
-                </div>
-
-                <button class="remove" onclick="event.stopPropagation(); removeItem(${index})">
-                    Remove
-                </button>
-            </div>
-        </div>`;
-    });
-
-    if(totalBox) totalBox.innerText = "Total: ₹" + total;
-}
-
 function loadOrders(){
     let container = document.getElementById("ordersContainer");
     if(!container) return;
@@ -316,6 +272,23 @@ function decreaseQty(index){
     loadCart();
 }
 
+function loadCategories(){
+    let container = document.getElementById("categoryContainer");
+    if(!container) return;
+
+    let uniqueCategories = [...new Set(products.map(p => p.category))];
+
+    container.innerHTML = "";
+
+    uniqueCategories.forEach(cat => {
+        container.innerHTML += `
+        <div class="category-card" onclick="openCategory('${cat}')">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <h3>${cat}</h3>
+        </div>
+        `;
+    });
+}
 
 function loadCategoryProducts(){
     let container = document.getElementById("productContainer");
@@ -352,6 +325,11 @@ function goBack(){
     window.location.href = "categories.html";
 }
 
+function openCategory(cat){
+    localStorage.setItem("selectedCategory", cat);
+    window.location.href = "category-products.html";
+}
+
 
 function openProductByName(name){
     let p = products.find(i=>i.name===name);
@@ -372,27 +350,12 @@ function clearOrders(){
 }
 
 // LOAD
-window.addEventListener("load", function(){
-
+window.onload = function(){
     updateProfile();
 
-    if(document.getElementById("productContainer")){
-        loadProducts();
-    }
-
-    if(document.getElementById("cartContainer")){
-        loadCart();
-    }
-
-    if(document.getElementById("ordersContainer")){
-        loadOrders();
-    }
-
-    if(document.getElementById("categoryContainer")){
-        loadCategories();
-    }
-
-    if(document.getElementById("catTitle")){
-        loadCategoryProducts();
-    }
-});
+    loadProducts();         
+    loadCart();              
+    loadOrders();            
+    loadCategories();        
+    loadCategoryProducts();  
+};
