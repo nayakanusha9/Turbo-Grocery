@@ -537,3 +537,41 @@ h1{
     background:white;
     color:black;
 }
+
+/* ================= FORM ================= */
+.form-box{
+    max-width:400px;
+    margin:50px auto;
+    background: rgba(255,255,255,0.1);
+    padding:25px;
+    border-radius:15px;
+    backdrop-filter: blur(10px);
+}
+
+.form-box input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:none;
+    border-radius:8px;
+}
+
+.form-box button{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    background:#1e88e5;
+    color:white;
+    cursor:pointer;
+}
+
+.back{
+    background:gray;
+}
+
+.error{
+    color:red;
+    font-size:12px;
+}

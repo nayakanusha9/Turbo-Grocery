@@ -2,22 +2,34 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>Login - Turbo Grocery</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="navbar">
-    <h2 class="logo">🛒 instamart</h2>
+<div class="topnav">
+    <div class="logo">⚡🛒 Turbo Grocery</div>
 </div>
 
-<div class="form-box">
-<h2>Login</h2>
+<div class="sidebar">
+    <div class="icon" onclick="location.href='index.html'">
+        <i class="fa-solid fa-house"></i>
+    </div>
+</div>
 
-<input type="text" id="loginName" placeholder="Name">
-<input type="password" id="loginPassword" placeholder="Password">
+<div class="main">
 
-<button onclick="login()">Login</button>
+    <div class="form-box">
+        <h2>Login</h2>
+
+        <input type="text" id="loginName" placeholder="Full Name">
+        <input type="password" id="loginPassword" placeholder="Password">
+
+        <button type="button" onclick="login()">Login</button>
+        <button class="back" onclick="goBackHome()">Back</button>
+    </div>
 
 </div>
 

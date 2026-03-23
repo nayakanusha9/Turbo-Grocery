@@ -135,27 +135,41 @@ function buyNow(){
 
 // SEARCH
 function searchProducts(){
-    let val=document.getElementById("searchInput").value.toLowerCase();
+    let input = document.getElementById("searchInput");
+    if(!input) return;
 
-    let container=document.getElementById("productContainer");
+    let value = input.value.toLowerCase();
 
-    let filtered=products.filter(p=>p.name.toLowerCase().includes(val));
+    let container = document.getElementById("productContainer");
+    if(!container) return;
 
-    container.innerHTML="";
-
-    if(filtered.length===0){
-        container.innerHTML="<h2>Item not available 😔</h2>";
+    // 🔥 IF EMPTY → LOAD ALL PRODUCTS AGAIN
+    if(value === ""){
+        loadProducts();
         return;
     }
 
-    filtered.forEach((p,i)=>{
-        container.innerHTML+=`
-        <div class="product-card" onclick="openProduct(${i})">
+    let filtered = products.filter(p => 
+        p.name.toLowerCase().includes(value)
+    );
+
+    container.innerHTML = "";
+
+    // ❌ NO RESULT CASE
+    if(filtered.length === 0){
+        container.innerHTML = "<p>Item not available 😔</p>";
+        return;
+    }
+
+    filtered.forEach(p => {
+        container.innerHTML += `
+        <div class="product-card ${isInCart(p.name) ? 'in-cart' : ''}" onclick="openProductByName('${p.name}')">
             <img src="${p.img}">
             <h3>${p.name}</h3>
             <p class="price">₹${p.price}</p>
             <p class="rating">${getStars(p.rating)}</p>
-        </div>`;
+        </div>
+        `;
     });
 }
 
@@ -347,6 +361,127 @@ function clearOrders(){
     localStorage.setItem("orders", JSON.stringify([]));
     loadOrders();
     showToast("Orders cleared 🗑️");
+}
+
+function signup(){
+    let name = document.getElementById("name").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let address = document.getElementById("address").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    // Reset errors
+    document.getElementById("nameError").innerText="";
+    document.getElementById("phoneError").innerText="";
+    document.getElementById("emailError").innerText="";
+    document.getElementById("addressError").innerText="";
+    document.getElementById("passError").innerText="";
+
+    let valid = true;
+
+    // NAME
+    if(!/^[A-Za-z ]+$/.test(name)){
+        document.getElementById("nameError").innerText="Enter valid name";
+        valid=false;
+    }
+
+    // PHONE
+    if(!/^[0-9]{10}$/.test(phone)){
+        document.getElementById("phoneError").innerText="Enter 10 digit number";
+        valid=false;
+    }
+
+    // EMAIL
+    if(!/^\S+@\S+\.\S+$/.test(email)){
+        document.getElementById("emailError").innerText="Invalid email";
+        valid=false;
+    }
+
+    // ADDRESS
+    if(!/^[A-Za-z ]+$/.test(address)){
+        document.getElementById("addressError").innerText="Letters only";
+        valid=false;
+    }
+
+    // PASSWORD
+    if(password === ""){
+        document.getElementById("passError").innerText="Enter password";
+        valid=false;
+    }
+
+    if(!valid) return;
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    users.push({name, phone, email, address, password});
+    localStorage.setItem("users", JSON.stringify(users));
+
+    showToast("Signup successful ✅");
+    // Clear form
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("address").value = "";
+    document.getElementById("password").value = "";
+    window.location.href="login.html";
+}
+
+function login(){
+    let name = document.getElementById("loginName").value;
+    let pass = document.getElementById("loginPassword").value;
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    let user = users.find(u => u.name === name && u.password === pass);
+
+    if(user){
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
+        alert("Login successful");
+        window.location.href = "index.html";
+    } else{
+        alert("Invalid login");
+    }
+}
+
+function updateProfile(){
+    let user = JSON.parse(localStorage.getItem("loggedInUser"));
+
+    let icon = document.getElementById("profileIcon");
+    let bigIcon = document.getElementById("bigIcon");
+    let name = document.getElementById("profileName");
+
+    if(!icon || !bigIcon || !name) return;
+
+    if(user){
+        let letter = user.name.charAt(0).toUpperCase();
+
+        icon.innerText = letter;
+        bigIcon.innerText = letter;
+
+        name.innerHTML = user.name + "<br><small>"+user.email+"</small>";
+    } else{
+        icon.innerText = "U";
+        bigIcon.innerText = "U";
+        name.innerText = "User";
+    }
+}
+
+function logout(){
+    localStorage.removeItem("loggedInUser");
+    showToast("Logged out 👋");
+    updateProfile();
+}
+
+function goBackHome(){
+    window.location.href = "index.html";
+}
+
+function goSignup(){
+    window.location.href = "signup.html";
+}
+
+function goLogin(){
+    window.location.href = "login.html";
 }
 
 // LOAD

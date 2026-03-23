@@ -2,23 +2,50 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Signup</title>
+<title>Signup - Turbo Grocery</title>
+
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
 
-<div class="navbar">
-    <h2 class="logo">🛒 instamart</h2>
+<!-- NAVBAR -->
+<div class="topnav">
+    <div class="logo">⚡🛒 Turbo Grocery</div>
 </div>
 
-<div class="form-box">
-<h2>Signup</h2>
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="icon" onclick="location.href='index.html'" data-name="Home">
+        <i class="fa-solid fa-house"></i>
+    </div>
+</div>
 
-<input type="text" id="name" placeholder="Name">
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="password" placeholder="Password">
+<!-- MAIN -->
+<div class="main">
 
-<button onclick="signup()">Signup</button>
+    <div class="form-box">
+        <h2>Signup</h2>
+
+        <input type="text" id="name" placeholder="Full Name">
+        <small id="nameError" class="error"></small>
+
+        <input type="text" id="phone" placeholder="Phone Number">
+        <small id="phoneError" class="error"></small>
+
+        <input type="email" id="email" placeholder="Email">
+        <small id="emailError" class="error"></small>
+
+        <input type="text" id="address" placeholder="Address">
+        <small id="addressError" class="error"></small>
+
+        <input type="password" id="password" placeholder="Password">
+        <small id="passError" class="error"></small>
+
+        <button type="button" onclick="signup()">Submit</button>
+        <button class="back" onclick="goBackHome()">Back</button>
+    </div>
 
 </div>
 
